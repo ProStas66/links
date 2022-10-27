@@ -5,9 +5,13 @@ import pyperclip
 import requests
 import bs4
 from tkinter import *
+from tkinter import ttk
+
+"""
 from tkinter.ttk import Progressbar
 from tkinter.ttk import Combobox
 from tkinter import messagebox as mb
+
 
 wf = os.path.abspath(__file__)
 wd, filename = os.path.split(wf)
@@ -40,15 +44,18 @@ try:
 	with open('links.html', 'r', encoding='utf-8') as f_in:
 		contents = f_in.read()
 except IOError:
-	#with open('E:\My\_MEGAsinc\study\python\links\example_clear.html', 'r', encoding='utf-8') as f_in:
-	with open(wd + '/example_clear.html', 'r', encoding='utf-8') as f_in:
+	#with open('E:\My\_MEGAsinc\study\python\links\links_clear.html', 'r', encoding='utf-8') as f_in:
+	with open(wd + '/links_clear.html', 'r', encoding='utf-8') as f_in:
 		contents = f_in.read()
 	
 soup = bs4.BeautifulSoup(contents, 'lxml')
 """
+
+"""
 for i in soup.select('ul'):
 	rubrica_list.append(i.get('id'))
 rubrica_list.remove('Содержание')
+"""
 """
 def new_link(rubrica):
 	newtag_li = soup.new_tag('li')
@@ -105,6 +112,37 @@ but_out = Button(text="Test", command=show_warning)
 but_out.pack(side=RIGHT)
 
 window.mainloop()
+"""
+
+class Main_win:
+	def __init__(self, master):
+		self.master = master
+		self.master.title('Описание ссылки')
+		self.lbl_url = LabelFrame(text='URL')
+		self.lbl_url.pack(anchor=W)
+		self.mes_url = Message(self.lbl_url, text='Здесь будет ссылка', width=500)
+		self.mes_url.pack()
+		self.mes_title = Message(text='Заголовок ссылки', width=500)
+		self.mes_title.pack(anchor=W)
+		self.txt_opis = Text( width=60, height=10)
+		self.txt_opis.insert('1.0', 'Здесь будет описание ссылки')
+		self.txt_opis.pack()
+		self.btn_ok = Button(text='OK')
+		self.btn_ok.pack(side=RIGHT)
+		self.btn_out = Button(text='Cancel', command=self.killwin)
+		self.btn_out.pack(side=RIGHT)
+		self.master.mainloop()
+		
+	def killwin(self):
+		window.destroy()
+		
+	
+window = Tk()
+Main_win(window)
+
+#Main_win(window)
+
+
 
 #new_link('Ссылки')
 #save_link()
