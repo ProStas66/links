@@ -7,28 +7,53 @@ import bs4
 from tkinter import *
 from tkinter import ttk
 
-"""
-from tkinter.ttk import Progressbar
-from tkinter.ttk import Combobox
-from tkinter import messagebox as mb
-
+#from tkinter.ttk import Progressbar
+#from tkinter.ttk import Combobox
+from tkinter import messagebox
 
 wf = os.path.abspath(__file__)
 wd, filename = os.path.split(wf)
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64)'}
 item = []
-rubrica = 'Ссылки'
-rubrica_list = []
 link = pyperclip.paste()
-item.append(link)
+
+def link_in():
+	if type(link) == str and link.startswith('http'):
+		#res = requests.get(link, headers)
+		res = Zapros().res
+		ppp = Page_links(res)
+		Main_win(window)
+		
+		return ppp
+	else:
+		messagebox.showerror('Это не ссылка!', 'Данные не являются ссылкой')
+
+class Zapros:
+	def __init__(self):
+		self.res = requests.get(link, headers)
+
+class Page_links:
+	def __init__(self, res):
+		self.eSoup = bs4.BeautifulSoup(res.text, 'lxml')
+		self.title = self.eSoup.title.txt
+		print(self.res)
+
+"""
+#rubrica = 'Ссылки'
+#rubrica_list = []
+#item.append(link)
 
 try:
-	res = requests.get(link, headers=headers)
+	res = requests.get(link, headers)
 except:
 	print ('Это не ссылка')
 	#show_warning()
 
-res.raise_for_status()
+#res.raise_for_status()
+print(res)
+
+
+
 eSoup = bs4.BeautifulSoup(res.text, 'lxml')
 #title = eSoup.find('title').text
 title = eSoup.title.text
@@ -112,6 +137,14 @@ but_out = Button(text="Test", command=show_warning)
 but_out.pack(side=RIGHT)
 
 window.mainloop()
+
+
+
+
+
+
+
+
 """
 
 class Main_win:
@@ -120,9 +153,9 @@ class Main_win:
 		self.master.title('Описание ссылки')
 		self.lbl_url = LabelFrame(text='URL')
 		self.lbl_url.pack(anchor=W)
-		self.mes_url = Message(self.lbl_url, text='Здесь будет ссылка', width=500)
+		self.mes_url = Message(self.lbl_url, text=link, width=500)
 		self.mes_url.pack()
-		self.mes_title = Message(text='Заголовок ссылки', width=500)
+		self.mes_title = Message(text='title', width=500)
 		self.mes_title.pack(anchor=W)
 		self.txt_opis = Text( width=60, height=10)
 		self.txt_opis.insert('1.0', 'Здесь будет описание ссылки')
@@ -138,8 +171,8 @@ class Main_win:
 		
 	
 window = Tk()
-Main_win(window)
-
+ppp = link_in()
+print(ppp.title)
 #Main_win(window)
 
 
