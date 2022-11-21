@@ -19,11 +19,11 @@ link = pyperclip.paste()
 
 def link_in():
 	if type(link) == str and link.startswith('http'):
-		res = requests.get(link, headers)
+		res = requests.get(link, headers=headers)
 		eSoup = bs4.BeautifulSoup(res.text, 'lxml')
 		title = eSoup.title.text
 		Main_win(window, title)
-		print(eSoup)
+		print(title)
 	else:
 		messagebox.showerror('Это не ссылка!', 'Данные не являются ссылкой')
 
@@ -146,7 +146,7 @@ class Main_win:
 		self.lbl_url.pack(anchor=W)
 		self.mes_url = Message(self.lbl_url, text=link, width=500)
 		self.mes_url.pack()
-		self.mes_title = Message(text='self.title', width=500)
+		self.mes_title = Message(text=self.title, width=500)
 		self.mes_title.pack(anchor=W)
 		self.txt_opis = Text( width=60, height=10)
 		self.txt_opis.insert('1.0', 'Здесь будет описание ссылки')
@@ -162,7 +162,7 @@ class Main_win:
 		
 	
 window = Tk()
-title = link_in()
+link_in()
 #print(ppp.title)
 #Main_win(window)
 
