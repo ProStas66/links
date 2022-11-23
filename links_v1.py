@@ -16,14 +16,27 @@ wd, filename = os.path.split(wf)
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64)'}
 item = []
 link = pyperclip.paste()
+link = 'https://sky.pro/head'
+
+def link_file():
+	if os.path.isfile('links.html'):
+		link_file = 'links.html'
+	else:
+		link_file = wd + '\links_clear.html'
+	return link_file
 
 def link_in():
 	if type(link) == str and link.startswith('http'):
 		res = requests.get(link, headers=headers)
 		eSoup = bs4.BeautifulSoup(res.text, 'lxml')
 		title = eSoup.title.text
-		Main_win(window, title)
-		print(title)
+		metatags = eSoup.find('meta', attrs={'name':'description'})
+		if metatags:
+			opisanie = metatags.get('content')
+		else:
+			opisanie = 'Описание отсутствует'
+		Main_win(window, title, opisanie)
+		print(link_file())
 	else:
 		messagebox.showerror('Это не ссылка!', 'Данные не являются ссылкой')
 
@@ -138,8 +151,9 @@ window.mainloop()
 """
 
 class Main_win:
-	def __init__(self, master, title):
+	def __init__(self, master, title, opisanie):
 		self.title = title
+		self.opisanie = opisanie
 		self.master = master
 		self.master.title('Описание ссылки')
 		self.lbl_url = LabelFrame(text='URL')
@@ -149,7 +163,7 @@ class Main_win:
 		self.mes_title = Message(text=self.title, width=500)
 		self.mes_title.pack(anchor=W)
 		self.txt_opis = Text( width=60, height=10)
-		self.txt_opis.insert('1.0', 'Здесь будет описание ссылки')
+		self.txt_opis.insert('1.0', self.opisanie)
 		self.txt_opis.pack()
 		self.btn_ok = Button(text='OK')
 		self.btn_ok.pack(side=RIGHT)
