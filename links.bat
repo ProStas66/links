@@ -1,1 +1,1 @@
-start E:\My\_MEGAsinc\study\python\links\links.py "%v"
+start E:\My\_MEGAsinc\study\python\links\links_v1.py "%v"
