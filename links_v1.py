@@ -139,13 +139,21 @@ class Edit_win:
 		self.link = len(self.links_list) - 1
 		self.html_view = HTMLLabel(self.slave, html=self.titles(), font=('Arial', 8))
 		self.html_view.pack(padx=20)
-		self.html_code = Text(self.slave, width=60, height=10)
-		#self.txt_opis.insert('0.0', self.links_list)
+		self.html_code = Text(self.slave, width='60', height='20')
 		self.html_code.insert('0.0', self.titles())
-		self.html_code.pack(side=LEFT)
+		self.html_code.pack(side=LEFT, padx=20)
 		self.html_code.bind('<<Modified>>', self.html_change)
 		self.scale_link = Scale(self.slave, from_=0, to=self.link, command=self.on_scale)
-		self.scale_link.pack(side=RIGHT)
+		self.scale_link.pack(side=LEFT)
+		self.btn_del = Button(self.slave, text='Delete', width='10')
+		self.btn_del.pack(pady=2)
+		self.btn_apply = Button(self.slave, text='Apply', width='10')
+		self.btn_apply.pack(pady=2)
+		self.btn_cancel = Button(self.slave, text='Cancel', width='10')
+		self.btn_cancel.pack(pady=2)
+		self.btn_save = Button(self.slave, text='Save', width='10')
+		self.btn_save.pack(pady=2)
+		
 	
 	def on_scale(self, val):
 		v = int(float(val))
