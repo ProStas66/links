@@ -136,13 +136,21 @@ class Edit_win:
 		self.slave = Toplevel(master)
 		self.slave.title('editor')
 		self.links_list = links_list
+		self.link = len(self.links_list) - 1
 		self.html_view = HTMLLabel(self.slave, html=self.titles(), font=('Arial', 8))
 		self.html_view.pack(padx=20)
 		self.html_code = Text(self.slave, width=60, height=10)
 		#self.txt_opis.insert('0.0', self.links_list)
 		self.html_code.insert('0.0', self.titles())
-		self.html_code.pack()
+		self.html_code.pack(side=LEFT)
 		self.html_code.bind('<<Modified>>', self.html_change)
+		self.scale_link = Scale(self.slave, from_=0, to=self.link, command=self.on_scale)
+		self.scale_link.pack(side=RIGHT)
+	
+	def on_scale(self, val):
+		v = int(float(val))
+		self.html_code.delete('0.0', END)
+		self.html_code.insert('0.0', self.links_list[v].prettify())
 	
 	def titles(self):
 		ttt = self.links_list[1].prettify()
