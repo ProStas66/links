@@ -7,6 +7,7 @@ import bs4
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from tkhtmlview import HTMLLabel
 
 wf = os.path.abspath(__file__)
 wd, filename = os.path.split(wf)
@@ -135,16 +136,21 @@ class Edit_win:
 		self.slave = Toplevel(master)
 		self.slave.title('editor')
 		self.links_list = links_list
-		self.ttt = []
-		self.txt_opis = Text(self.slave, width=60, height=10)
+		self.html_view = HTMLLabel(self.slave, html=self.titles(), font=('Arial', 8))
+		self.html_view.pack(padx=20)
+		self.html_code = Text(self.slave, width=60, height=10)
 		#self.txt_opis.insert('0.0', self.links_list)
-		self.txt_opis.insert('0.0', self.titles())
-		self.txt_opis.pack()
-		
+		self.html_code.insert('0.0', self.titles())
+		self.html_code.pack()
+		self.html_code.bind('<<Modified>>', self.html_change)
+	
 	def titles(self):
-		ttt = self.links_list[0].get_text()
-		#ttt.string = 'New string'
+		ttt = self.links_list[1].prettify()
 		return ttt
+		
+	def html_change(self, event):
+		self.html_code.edit_modified(0)
+		self.html_view.set_html(self.html_code.get('1.0', END))
 			
 		
 	
