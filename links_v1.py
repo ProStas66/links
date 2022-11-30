@@ -13,6 +13,7 @@ wd, filename = os.path.split(wf)
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64)'}
 item = []
 link = pyperclip.paste()
+link = 'http://do.ru'
 
 def link_file():
 	if os.path.isfile('links.html'):
@@ -84,14 +85,24 @@ class Main_win:
 		self.txt_opis.pack()
 		self.btn_ok = Button(text='OK', command=self.make_html)
 		self.btn_ok.pack(side=RIGHT)
+		self.btn_edit = Button(text='Elit', command=self.open_edit)
+		self.btn_edit.pack(side=LEFT)
 		self.btn_out = Button(text='Cancel', command=self.killwin)
 		self.btn_out.pack(side=RIGHT)
 		self.master.mainloop()
 		
-	def make_html(self):
+	def open_links(self):
 		with open(link_file(), 'r', encoding='utf-8') as f_in:
 			contents = f_in.read()
-		soup = bs4.BeautifulSoup(contents, 'lxml')
+		return bs4.BeautifulSoup(contents, 'lxml')
+		
+	
+	def make_html(self):
+		#with open(link_file(), 'r', encoding='utf-8') as f_in:
+		#	contents = f_in.read()
+		#soup = bs4.BeautifulSoup(contents, 'lxml')
+		
+		soup = self.open_links()
 		
 		li_tag = soup.new_tag('li')
 		a_tag = soup.new_tag('a', href=link)
@@ -111,12 +122,30 @@ class Main_win:
 		with open ('links.html', 'w', encoding='utf-8') as f_out:
 			f_out.write(soup)
 		self.killwin()
+	
+	def open_edit(self):
+		Edit_win(self.master, self.open_links()('li'))
 				
 	
 	def killwin(self):
 		window.destroy()
 	
-	
+class Edit_win:
+	def __init__(self, master, links_list):
+		self.slave = Toplevel(master)
+		self.slave.title('editor')
+		self.links_list = links_list
+		self.ttt = []
+		self.txt_opis = Text(self.slave, width=60, height=10)
+		#self.txt_opis.insert('0.0', self.links_list)
+		self.txt_opis.insert('0.0', self.titles())
+		self.txt_opis.pack()
+		
+	def titles(self):
+		ttt = self.links_list[0].get_text()
+		#ttt.string = 'New string'
+		return ttt
+			
 		
 	
 window = Tk()
