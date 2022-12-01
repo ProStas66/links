@@ -136,34 +136,63 @@ class Edit_win:
 		self.slave = Toplevel(master)
 		self.slave.title('editor')
 		self.links_list = links_list
-		self.link = len(self.links_list) - 1
-		self.html_view = HTMLLabel(self.slave, html=self.titles(), font=('Arial', 8))
+		self.links = self.len_links()
+		self.link_num = 0
+		
+		self.html_view = HTMLLabel(self.slave, font=('Arial', 8))
 		self.html_view.pack(padx=20)
 		self.html_code = Text(self.slave, width='60', height='20')
-		self.html_code.insert('0.0', self.titles())
+		self.code_in()
 		self.html_code.pack(side=LEFT, padx=20)
 		self.html_code.bind('<<Modified>>', self.html_change)
-		self.scale_link = Scale(self.slave, from_=0, to=self.link, command=self.on_scale)
-		self.scale_link.pack(side=LEFT)
-		self.btn_del = Button(self.slave, text='Delete', width='10')
+		self.scale_frm = Frame(self.slave, width=10, bg='red')
+		self.scale_frm.pack(side=LEFT)
+
+		self.prev_btn = Button(self.scale_frm, text='Prev', command=lambda: self.links_scale(-1))
+		self.prev_btn.pack()
+		self.next_btn = Button(self.scale_frm, text='Next', command=lambda: self.links_scale(1))
+		self.next_btn.pack()
+		self.btn_del = Button(self.slave, text='Delete', width='10', command=self.delete_link)
 		self.btn_del.pack(pady=2)
-		self.btn_apply = Button(self.slave, text='Apply', width='10')
+		self.btn_apply = Button(self.slave, text='Apply', width='10', command=self.apply_html)
 		self.btn_apply.pack(pady=2)
 		self.btn_cancel = Button(self.slave, text='Cancel', width='10')
 		self.btn_cancel.pack(pady=2)
 		self.btn_save = Button(self.slave, text='Save', width='10')
 		self.btn_save.pack(pady=2)
+		self.links_scale(0)
 		
 	
-	def on_scale(self, val):
-		v = int(float(val))
+	def len_links(self):
+		lenl = len(self.links_list) - 1
+		return lenl
+	
+	def links_scale(self, a):
+		self.link_num += a
+		if self.link_num == 0:
+			self.prev_btn['state'] = DISABLED
+		else:
+			self.prev_btn['state'] = NORMAL
+		if self.link_num == self.len_links():
+			self.next_btn['state'] = DISABLED
+		else:
+			self.next_btn['state'] = NORMAL
+		self.code_in()
+	
+	def code_in(self):
 		self.html_code.delete('0.0', END)
-		self.html_code.insert('0.0', self.links_list[v].prettify())
+		self.html_code.insert('0.0', self.links_list[self.link_num].prettify())
 	
-	def titles(self):
-		ttt = self.links_list[1].prettify()
-		return ttt
-		
+	def apply_html(self):
+		soup = bs4.BeautifulSoup(self.html_code.get('1.0', END), 'lxml')
+		self.links_list[self.link_num] = soup
+	
+	def delete_link(self):
+		del self.links_list[self.link_num]
+		self.code_in()
+			
+	
+	
 	def html_change(self, event):
 		self.html_code.edit_modified(0)
 		self.html_view.set_html(self.html_code.get('1.0', END))
