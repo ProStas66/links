@@ -78,9 +78,6 @@ class Main_win:
 		self.mes_url.pack()
 		self.mes_title = Message(text=self.title, width=500)
 		self.mes_title.pack(anchor=W)
-		#self.txt_title = Entry(width=60)
-		#self.txt_title.insert(0, self.title)
-		#self.txt_title.pack()
 		self.txt_opis = Text( width=60, height=10)
 		self.txt_opis.insert('1.0', self.opisanie)
 		self.txt_opis.pack()
@@ -125,7 +122,12 @@ class Main_win:
 		self.killwin()
 	
 	def open_edit(self):
-		Edit_win(self.master, self.open_links()('li'))
+		self.editor = Edit_win(self.master, self.open_links()('li'))
+		self.return_links = self.editor.go()
+		if self.return_links:
+			print(self.return_links)
+		else:
+			print('Нет данных')
 				
 	
 	def killwin(self):
@@ -138,7 +140,7 @@ class Edit_win:
 		self.links_list = links_list
 		self.links = self.len_links()
 		self.link_num = 0
-		
+		self.new_links = None
 		self.html_view = HTMLLabel(self.slave, font=('Arial', 8))
 		self.html_view.pack(padx=20)
 		self.html_code = Text(self.slave, width='60', height='20')
@@ -158,7 +160,7 @@ class Edit_win:
 		self.btn_apply.pack(pady=2)
 		self.btn_cancel = Button(self.slave, text='Cancel', width='10')
 		self.btn_cancel.pack(pady=2)
-		self.btn_save = Button(self.slave, text='Save', width='10')
+		self.btn_save = Button(self.slave, text='Save', width='10', command=self.save_links)
 		self.btn_save.pack(pady=2)
 		self.links_scale(0)
 		
@@ -191,7 +193,13 @@ class Edit_win:
 		del self.links_list[self.link_num]
 		self.code_in()
 			
+	def save_links(self):
+		self.new_links = self.links_list
 	
+	def go(self):
+		self.slave.grab_set()
+		self.slave.wait_window()
+		return self.new_links
 	
 	def html_change(self, event):
 		self.html_code.edit_modified(0)
