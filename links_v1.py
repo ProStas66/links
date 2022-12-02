@@ -35,7 +35,6 @@ def link_in():
 		else:
 			opisanie = 'Описание отсутствует'
 		Main_win(window, title, opisanie)
-		#links_html(title, opisanie)
 	else:
 		messagebox.showerror('Это не ссылка!', 'Данные не являются ссылкой')
 
@@ -72,6 +71,8 @@ class Main_win:
 		self.opisanie = opisanie
 		self.master = master
 		self.master.title('Описание ссылки')
+		self.soup = self.open_links()
+		self.list_li = self.soup('li')
 		self.lbl_url = LabelFrame(text='URL')
 		self.lbl_url.pack(anchor=W)
 		self.mes_url = Message(self.lbl_url, text=link, width=500)
@@ -83,8 +84,14 @@ class Main_win:
 		self.txt_opis.pack()
 		self.btn_ok = Button(text='OK', command=self.make_html)
 		self.btn_ok.pack(side=RIGHT)
-		self.btn_edit = Button(text='Elit', command=self.open_edit)
+		self.btn_edit = Button(text='Edit', command=self.open_edit)
 		self.btn_edit.pack(side=LEFT)
+		
+		self.chk_state = BooleanVar()
+		self.chk_state.set(True)
+		self.chk = Checkbutton(text='Добавить ссылку', variable=self.chk_state)
+		self.chk.pack(side=RIGHT)
+
 		self.btn_out = Button(text='Cancel', command=self.killwin)
 		self.btn_out.pack(side=RIGHT)
 		self.master.mainloop()
@@ -94,38 +101,34 @@ class Main_win:
 			contents = f_in.read()
 		return bs4.BeautifulSoup(contents, 'lxml')
 		
-	
-	def make_html(self):
-		#with open(link_file(), 'r', encoding='utf-8') as f_in:
-		#	contents = f_in.read()
-		#soup = bs4.BeautifulSoup(contents, 'lxml')
-		
-		soup = self.open_links()
-		
-		li_tag = soup.new_tag('li')
-		a_tag = soup.new_tag('a', href=link)
+	def new_link(self):
+		li_tag = self.soup.new_tag('li')
+		a_tag = self.soup.new_tag('a', href=link)
 		a_tag.string = self.title
-		a_tag.string.wrap(soup.new_tag('H3'))
+		a_tag.string.wrap(self.soup.new_tag('H3'))
 		li_tag.append(a_tag)
 		li_tag.append(self.txt_opis.get(1.0, END))
-		soup.ul.append(li_tag)
+		return li_tag
 		
-		list_li = soup('li')
-		list_li = sorted(list_li, key = lambda elem: elem.a.get('href'))
-		ul_tag = soup.find('ul')
+	
+	def make_html(self):
+		if self.chk_state.get():
+			self.list_li.append(self.new_link())
+		self.list_li = sorted(self.list_li, key = lambda elem: elem.a.get('href'))
+		ul_tag = self.soup.find('ul')
 		ul_tag.clear()
-		for elem in list_li:
+		for elem in self.list_li:
 			ul_tag.append(elem)
-		soup = soup.prettify()
+		self.soup = self.soup.prettify()
 		with open ('links.html', 'w', encoding='utf-8') as f_out:
-			f_out.write(soup)
+			f_out.write(self.soup)
 		self.killwin()
 	
 	def open_edit(self):
-		self.editor = Edit_win(self.master, self.open_links()('li'))
+		self.editor = Edit_win(self.master, self.list_li)
 		self.return_links = self.editor.go()
 		if self.return_links:
-			print(self.return_links)
+			self.list_li = self.return_links
 		else:
 			print('Нет данных')
 				
@@ -158,7 +161,7 @@ class Edit_win:
 		self.btn_del.pack(pady=2)
 		self.btn_apply = Button(self.slave, text='Apply', width='10', command=self.apply_html)
 		self.btn_apply.pack(pady=2)
-		self.btn_cancel = Button(self.slave, text='Cancel', width='10')
+		self.btn_cancel = Button(self.slave, text='Cancel', width='10', command=self.slave.destroy)
 		self.btn_cancel.pack(pady=2)
 		self.btn_save = Button(self.slave, text='Save', width='10', command=self.save_links)
 		self.btn_save.pack(pady=2)
@@ -195,6 +198,7 @@ class Edit_win:
 			
 	def save_links(self):
 		self.new_links = self.links_list
+		self.slave.destroy()
 	
 	def go(self):
 		self.slave.grab_set()
