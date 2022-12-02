@@ -14,7 +14,7 @@ wd, filename = os.path.split(wf)
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64)'}
 item = []
 link = pyperclip.paste()
-link = 'http://do.ru'
+#link = 'https://gooool.tv'
 
 def link_file():
 	if os.path.isfile('links.html'):
@@ -150,7 +150,7 @@ class Edit_win:
 		self.code_in()
 		self.html_code.pack(side=LEFT, padx=20)
 		self.html_code.bind('<<Modified>>', self.html_change)
-		self.scale_frm = Frame(self.slave, width=10, bg='red')
+		self.scale_frm = Frame(self.slave, width=10)
 		self.scale_frm.pack(side=LEFT)
 
 		self.prev_btn = Button(self.scale_frm, text='Prev', command=lambda: self.links_scale(-1))
