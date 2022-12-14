@@ -1,1 +1,3 @@
-start E:\My\_MEGAsinc\study\python\links\links_v1.py "%v"
+REM start full file name "%v"
+start D:\My_python\links\links_v1.py "%v"
+
